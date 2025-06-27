@@ -21,6 +21,29 @@ namespace DeliveryInternation2._0.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Cart)
+                .WithOne(c => c.User)
+                .HasForeignKey<Cart>(c => c.UserId);
+
+            modelBuilder.Entity<Dish>()
+                .Property(d => d.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Cart>()
+                .Property(o => o.Amount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Token)
+                .WithOne(t => t.User)
+                .HasForeignKey<StorageUserToken>(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

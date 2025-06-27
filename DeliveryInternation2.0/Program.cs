@@ -1,4 +1,6 @@
 using System.Text;
+using DeliveryInternation2._0.Applications.BusinessLogics;
+using DeliveryInternation2._0.Applications.Services;
 using DeliveryInternation2._0.Configurations;
 using DeliveryInternation2._0.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,10 +19,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen( c=>
 {
-    c.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "DeliveryInternational.Api",
-        Version = "2.0"
+        Title = "DeliveryInternational0.2.Api",
+        Version = "1.0"
     });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -71,6 +73,11 @@ builder.Services.AddAuthentication(option =>
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrderService,  OrderService>();
+builder.Services.AddScoped<IDishService, DishService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
 

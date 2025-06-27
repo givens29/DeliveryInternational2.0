@@ -5,5 +5,6 @@
         public Guid Id { get; set; }
         public int Count { get; set; }
         public Dish Dish { get; set; } = new Dish();
+        public Cart Cart { get; set; }
     }
 }
