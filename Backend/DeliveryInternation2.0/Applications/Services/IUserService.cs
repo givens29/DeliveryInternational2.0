@@ -7,9 +7,9 @@ namespace DeliveryInternation2._0.Applications.Services
     {
         Task<string> Registration(UserRegistrationDto newUser);
         Task<string> Login(string email, string password);
-        Task<bool> Logout(string email);
+        Task<string> Logout(string email);
         Task<UserProfileDto> GetProfile(string email);
-        Task<User> EditProfile(string email, UserEditProfileDto updateProfile);
+        Task<string> EditProfile(string email, UserEditProfileDto updateProfile);
     }
 
 }

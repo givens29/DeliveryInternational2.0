@@ -103,7 +103,7 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
 
         }
         
-        public async Task<GetCartDto> GetCart (string email, Guid idCart)
+        public async Task<GetCartDto> GetCart (string email)
         {
             var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email);
 
@@ -115,7 +115,7 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
             var cart = await _dataContext.Carts
                 .Include(c => c.DishInCarts)
                 .ThenInclude(d => d.Dish)
-                .FirstOrDefaultAsync(c => c.Id == idCart);
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
 
             if (cart == null)
             {
@@ -128,7 +128,7 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
                 Amount = cart.Amount,
                 DishInCarts = cart.DishInCarts.Select( d => new DishInCartDto
                 {
-                    Id = d.Id,
+                    Id = d.Dish.Id,
                     Name = d.Dish.Name,
                     Price = d.Dish.Price,
                     Image = d.Dish.Image,

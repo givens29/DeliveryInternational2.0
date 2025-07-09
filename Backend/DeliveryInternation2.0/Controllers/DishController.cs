@@ -54,7 +54,7 @@ namespace DeliveryInternation2._0.Controllers
 
         [AllowAnonymous]
         [HttpGet("getDishesByFilters")]
-        public async Task<IActionResult> GetDishesByFilters(Category? category = null, bool isVegetarian = false, int pageNum = 1, Sort? sort = null)
+        public async Task<IActionResult> GetDishesByFilters(Category? category = null, bool? isVegetarian = null, int pageNum = 1, Sort? sort = null)
         {
             try
             {

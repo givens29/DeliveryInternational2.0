@@ -1,4 +1,5 @@
-﻿using DeliveryInternation2._0.Models.Enums;
+﻿using DeliveryInternation2._0.Models;
+using DeliveryInternation2._0.Models.Enums;
 
 namespace DeliveryInternation2._0.Dtos
 {
@@ -11,5 +12,6 @@ namespace DeliveryInternation2._0.Dtos
         public string Address { get; set; }
         public string Email { get; set; }
         public string? PhoneNumber { get; set; }
+        public UserCartDto Cart { get; set; }
     }
 }

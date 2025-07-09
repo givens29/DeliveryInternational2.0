@@ -99,7 +99,7 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
             return token;
         }
 
-        public async Task<bool> Logout(string email)
+        public async Task<string> Logout(string email)
         {
             var userToken = await _dataContext.StorageUsersTokens.FirstOrDefaultAsync(t => t.email == email);
 
@@ -110,12 +110,16 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
 
             _dataContext.StorageUsersTokens.Remove(userToken);
             await _dataContext.SaveChangesAsync();
-            return true;
+            return "You logout!";
         }
 
         public async Task<UserProfileDto> GetProfile(string email)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _dataContext.Users
+                .Include(u => u.Cart)
+                .ThenInclude(c => c.DishInCarts)
+                .ThenInclude(di => di.Dish)
+                .FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
@@ -130,13 +134,28 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
                 Gender = user.Gender,
                 Address = user.Address,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber,
+                Cart = new UserCartDto
+                {
+                    Id = user.Cart.Id,
+                    Amount = user.Cart.Amount,
+                    DishInCarts = user.Cart.DishInCarts.Select(d => new DishInCartDto
+                    {
+                        Id = d.Dish.Id,
+                        Name = d.Dish.Name,
+                        Price = d.Dish.Price,
+                        Image = d.Dish.Image,
+                        Count = d.Count,
+                        TotalPrice = d.Dish.Price * d.Count
+                    }).ToList(),
+                    DishNumber = user.Cart.DishInCarts.Count(),
+                }
             };
 
             return userProfile;
         }
 
-        public async Task<User> EditProfile(string email, UserEditProfileDto updateProfile)
+        public async Task<string> EditProfile(string email, UserEditProfileDto updateProfile)
         {
             var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email );
 
@@ -168,7 +187,7 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
 
             await _dataContext.SaveChangesAsync();
 
-            return user;
+            return "Profile updated successfully!";
 
         }
 

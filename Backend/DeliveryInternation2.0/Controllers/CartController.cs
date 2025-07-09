@@ -53,7 +53,7 @@ namespace DeliveryInternation2._0.Controllers
 
         [HttpPut("increaseOrDecreaseDish")]
         [Authorize(Policy = "AnyAuthenticatedUser")]
-        public async Task<IActionResult> IncreaseOrDecreaseDish(Guid idCart, Guid idDish, bool isIncrease)
+        public async Task<IActionResult> IncreaseOrDecreaseDish(Guid idDish, bool isIncrease)
         {
             var emailClaim = User.FindFirst(ClaimTypes.Email);
 
@@ -86,7 +86,7 @@ namespace DeliveryInternation2._0.Controllers
 
         [HttpGet("getCart")]
         [Authorize(Policy = "AnyAuthenticatedUser")]
-        public async Task<IActionResult> GetCart(Guid idCart)
+        public async Task<IActionResult> GetCart()
         {
             var emailClaim = User.FindFirst(ClaimTypes.Email);
 
@@ -94,7 +94,7 @@ namespace DeliveryInternation2._0.Controllers
             {
                 try
                 {
-                    var cart = await _cartService.GetCart(emailClaim.Value, idCart);
+                    var cart = await _cartService.GetCart(emailClaim.Value);
                     return Ok(cart);
                 }
                 catch (UnauthorizedAccessException ex)

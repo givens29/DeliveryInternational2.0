@@ -35,7 +35,7 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
             return dish;
         }
 
-        public async Task<ListDishesDto> GetDishesByFilters(Category? category, bool isVegetarian, int pageNum, Sort? sort)
+        public async Task<ListDishesDto> GetDishesByFilters(Category? category, bool? isVegetarian, int pageNum, Sort? sort)
         {
             IQueryable<Dish> dishQuery = _dataContext.Dishes.AsQueryable();
 
@@ -43,13 +43,9 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
             {
                 dishQuery = dishQuery.Where(d => d.Category == category.Value);
             }
-            if (isVegetarian)
+            if (isVegetarian.HasValue)
             {
                 dishQuery = dishQuery.Where(d => d.IsVegetarian);
-            }
-            else
-            {
-                dishQuery = dishQuery.Where(d => !d.IsVegetarian);
             }
 
             switch(sort)

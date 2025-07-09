@@ -45,6 +45,16 @@ builder.Services.AddSwaggerGen( c=>
     }
   });
 });
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5174")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+});
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AnyAuthenticatedUser",
@@ -80,6 +90,8 @@ builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

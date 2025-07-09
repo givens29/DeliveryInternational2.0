@@ -6,6 +6,6 @@ namespace DeliveryInternation2._0.Applications.Services
     {
         Task<string> AddDishToCart(string email, Guid idDish);
         Task<string> IncreaseOrDecreaseDish(string email, Guid idDish, bool isIncrease);
-        Task<GetCartDto> GetCart(string email, Guid idCart);
+        Task<GetCartDto> GetCart(string email);
     }
 }
