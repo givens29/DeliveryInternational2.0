@@ -116,5 +116,33 @@ namespace DeliveryInternation2._0.Controllers
             }
 
         }
+
+        [HttpDelete("removeDish")]
+        [Authorize(Policy = "AnyAuthenticatedUser")]
+        public async Task<IActionResult> RemoveDish(Guid idDish)
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email);
+
+            if (emailClaim != null)
+            {
+                try
+                {
+                    var cart = await _cartService.RemoveDish(emailClaim.Value, idDish);
+                    return Ok(cart);
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    return NotFound(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, ex.Message);
+                }
+            }
+            else
+            {
+                return Unauthorized("You are not authenticated. Please authenticated yourself");
+            }
+        }
     }
 }

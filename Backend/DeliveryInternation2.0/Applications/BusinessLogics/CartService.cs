@@ -102,6 +102,21 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
             return result;
 
         }
+
+        public async Task<string> RemoveDish(string email, Guid idDish)
+        {
+            var dish = await _dataContext.DishesInCart.FirstOrDefaultAsync(d => d.Cart.User.Email == email && d.Dish.Id == idDish);
+
+            if(dish == null)
+            {
+                throw new KeyNotFoundException("Dish can not be found.");
+            }
+
+            _dataContext.Remove(dish);
+            await _dataContext.SaveChangesAsync();
+
+            return "Dish removed!";
+        }
         
         public async Task<GetCartDto> GetCart (string email)
         {
