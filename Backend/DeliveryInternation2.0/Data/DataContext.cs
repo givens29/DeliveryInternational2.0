@@ -13,6 +13,7 @@ namespace DeliveryInternation2._0.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<DishInCart> DishesInCart { get; set; }
+        public DbSet<DishInOrder> DishInOrders { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Rating> Ratings { get; set; }

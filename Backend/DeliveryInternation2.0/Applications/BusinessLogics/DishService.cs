@@ -37,7 +37,9 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
 
         public async Task<ListDishesDto> GetDishesByFilters(Category? category, bool? isVegetarian, int pageNum, Sort? sort)
         {
-            IQueryable<Dish> dishQuery = _dataContext.Dishes.AsQueryable();
+            var dishQuery = _dataContext.Dishes
+                .Include(d => d.Ratings) 
+                .AsQueryable();
 
             if (category.HasValue)
             {
@@ -101,7 +103,9 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
         
         public async Task<Dish> GetConcreteDish(Guid idDish)
         {
-            var dish = await _dataContext.Dishes.FirstOrDefaultAsync(d => d.Id == idDish);
+            var dish = await _dataContext.Dishes
+                .Include(d => d.Ratings)
+                .FirstOrDefaultAsync(d => d.Id == idDish);
 
             if(dish == null)
             {
@@ -127,7 +131,7 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
                 throw new KeyNotFoundException("Dish can not be found.");
             }
 
-            var dishRated = await _dataContext.Ratings.FirstOrDefaultAsync(r => r.User.Email == email && r.Dish.Id == idDish);
+            var dishRated = await _dataContext.Ratings.FirstOrDefaultAsync(r => r.UserId == user.Id && r.DishId == idDish);
 
             if (dishRated != null)
             {
@@ -137,8 +141,8 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
 
             var userRating = new Rating
             {
-                User = user,
-                Dish = dish,
+                UserId = user.Id,
+                DishId = dish.Id,
                 Value = rating
             };
 

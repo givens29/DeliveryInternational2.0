@@ -43,6 +43,9 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
 
             user.Cart.Amount += dish.Price;
             user.Cart.DishInCarts.Add(addDish);
+
+            _dataContext.DishesInCart.Add(addDish);
+
             await _dataContext.SaveChangesAsync();
 
             return "Dish added to cart.";

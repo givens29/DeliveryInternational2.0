@@ -15,59 +15,90 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
             _dataContext = dataContext;
         }
 
-        public async Task<Order> CreateOrder(string email, string address)
+        public async Task<Order> CreateOrder(OrderDto orderDto)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user == null)
-            {
-                throw new UnauthorizedAccessException("You are not authorized. Please authorize yourself.");
-            }
-
             var cart = await _dataContext.Carts
-                .Include(c => c.Orders)
-                .FirstOrDefaultAsync(c => c.User.Email == email);
+                .Include(c => c.DishInCarts)
+                    .ThenInclude(d => d.Dish)
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.User.Email == orderDto.email);
 
             if (cart == null)
-            {
-                throw new InvalidOperationException("Cart can not be found.");
-            }
+                throw new InvalidOperationException("Cart not found.");
+
+            if (!cart.DishInCarts.Any())
+                throw new InvalidOperationException("Cart is empty.");
 
             var order = new Order
             {
-                DeliveryTime = DateTime.UtcNow,
-                Address = address,
+                PhoneNumber = orderDto.phoneNumber,
+                Email = orderDto.email,
+                DeliveryTime = orderDto.dateTimeDelivery,
+                Address = orderDto.address,
                 Price = cart.Amount,
                 Status = Status.InProcess,
-                CardId = cart.Id,
-                Cart = cart
+                OrderTime = DateTime.Now,
+                Cart = cart,
+                DishInOrders = new List<DishInOrder>()
             };
 
-            if(cart.Orders == null)
+            foreach (var item in cart.DishInCarts)
             {
-                cart.Orders = new List<Order> {order};
-            }
-            else
-            {
-                cart.Orders.Add(order);
+                var dishInOrder = new DishInOrder
+                {
+                    Dish = item.Dish,
+                    Count = item.Count,
+                    Order = order
+                };
+
+                order.DishInOrders.Add(dishInOrder);
             }
 
             await _dataContext.Orders.AddAsync(order);
+
+            cart.DishInCarts.Clear();
+            cart.Amount = 0;
+
             await _dataContext.SaveChangesAsync();
 
             return order;
         }
-    
-        public async Task<Order> GetConcreateOrder(Guid idOrder)
+
+
+        public async Task<GetOrderDto> GetConcreateOrder(Guid idOrder)
         {
-            var order = await _dataContext.Orders.FirstOrDefaultAsync(o => o.id == idOrder);
+            var order = await _dataContext.Orders
+                .Include(o => o.DishInOrders)
+                .ThenInclude( d => d.Dish)
+                .FirstOrDefaultAsync(o => o.id == idOrder);
 
             if(order == null)
             {
                 throw new KeyNotFoundException("Order can not be found.");
             }
 
-            return order;
+            var orderDto = new GetOrderDto
+            {
+                id = order.id,
+                PhoneNumber = order.PhoneNumber,
+                Email = order.Email,
+                DeliveryTime = order.DeliveryTime,
+                OrderTime = order.OrderTime,
+                Price = order.Price,
+                Address = order.Address,
+                Status = order.Status,
+                DishInCart = order.DishInOrders.Select(d => new DishInCartDto
+                {
+                    Id = d.Id,
+                    Name = d.Dish.Name,
+                    Image = d.Dish.Image,
+                    Count = d.Count,
+                    Price = d.Dish.Price,
+                    TotalPrice = d.Dish.Price * d.Count
+                }).ToList()
+            };
+
+            return orderDto;
         }
 
         public async Task<List<Order>> GetListOrders(string email)
@@ -80,8 +111,6 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
         public async Task<string> ConfirmDelivery(Guid idOrder)
         {
             var order = await _dataContext.Orders
-                .Include(o => o.Cart)
-                .ThenInclude(c => c.DishInCarts)
                 .FirstOrDefaultAsync(o => o.id == idOrder);
             
             if(order == null)
@@ -89,9 +118,9 @@ namespace DeliveryInternation2._0.Applications.BusinessLogics
                 throw new KeyNotFoundException("Order can not be found.");
             }
 
+            order.OrderTime = DateTime.Now;
             order.Status = Status.Delivered;
-            order.Cart.Amount = 0;
-            order.Cart.DishInCarts.Clear();
+
             await _dataContext.SaveChangesAsync();
             return "Order Delivered.";
         }

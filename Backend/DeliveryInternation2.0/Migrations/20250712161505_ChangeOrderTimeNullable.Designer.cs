@@ -4,6 +4,7 @@ using DeliveryInternation2._0.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeliveryInternation2._0.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250712161505_ChangeOrderTimeNullable")]
+    partial class ChangeOrderTimeNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace DeliveryInternation2._0.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Dish", b =>
@@ -71,7 +74,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Dishes", (string)null);
+                    b.ToTable("Dishes");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.DishInCart", b =>
@@ -95,7 +98,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasIndex("DishId");
 
-                    b.ToTable("DishesInCart", (string)null);
+                    b.ToTable("DishesInCart");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.DishInOrder", b =>
@@ -119,7 +122,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasIndex("Orderid");
 
-                    b.ToTable("DishInOrders", (string)null);
+                    b.ToTable("DishInOrders");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Order", b =>
@@ -160,7 +163,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Rating", b =>
@@ -184,7 +187,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.StorageUserToken", b =>
@@ -209,7 +212,7 @@ namespace DeliveryInternation2._0.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("StorageUsersTokens", (string)null);
+                    b.ToTable("StorageUsersTokens");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.User", b =>
@@ -245,7 +248,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Cart", b =>

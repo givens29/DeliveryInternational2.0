@@ -4,6 +4,7 @@ using DeliveryInternation2._0.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeliveryInternation2._0.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250711143126_addOrderFields")]
+    partial class addOrderFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace DeliveryInternation2._0.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Dish", b =>
@@ -71,7 +74,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Dishes", (string)null);
+                    b.ToTable("Dishes");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.DishInCart", b =>
@@ -95,31 +98,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasIndex("DishId");
 
-                    b.ToTable("DishesInCart", (string)null);
-                });
-
-            modelBuilder.Entity("DeliveryInternation2._0.Models.DishInOrder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("DishId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Orderid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DishId");
-
-                    b.HasIndex("Orderid");
-
-                    b.ToTable("DishInOrders", (string)null);
+                    b.ToTable("DishesInCart");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Order", b =>
@@ -132,6 +111,9 @@ namespace DeliveryInternation2._0.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("CardId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CartId")
                         .HasColumnType("uniqueidentifier");
 
@@ -142,7 +124,7 @@ namespace DeliveryInternation2._0.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("OrderTime")
+                    b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PhoneNumber")
@@ -160,7 +142,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Rating", b =>
@@ -184,7 +166,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.StorageUserToken", b =>
@@ -209,7 +191,7 @@ namespace DeliveryInternation2._0.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("StorageUsersTokens", (string)null);
+                    b.ToTable("StorageUsersTokens");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.User", b =>
@@ -245,7 +227,7 @@ namespace DeliveryInternation2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Cart", b =>
@@ -278,29 +260,10 @@ namespace DeliveryInternation2._0.Migrations
                     b.Navigation("Dish");
                 });
 
-            modelBuilder.Entity("DeliveryInternation2._0.Models.DishInOrder", b =>
-                {
-                    b.HasOne("DeliveryInternation2._0.Models.Dish", "Dish")
-                        .WithMany()
-                        .HasForeignKey("DishId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DeliveryInternation2._0.Models.Order", "Order")
-                        .WithMany("DishInOrders")
-                        .HasForeignKey("Orderid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Dish");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("DeliveryInternation2._0.Models.Order", b =>
                 {
                     b.HasOne("DeliveryInternation2._0.Models.Cart", "Cart")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -341,16 +304,13 @@ namespace DeliveryInternation2._0.Migrations
             modelBuilder.Entity("DeliveryInternation2._0.Models.Cart", b =>
                 {
                     b.Navigation("DishInCarts");
+
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.Dish", b =>
                 {
                     b.Navigation("Ratings");
-                });
-
-            modelBuilder.Entity("DeliveryInternation2._0.Models.Order", b =>
-                {
-                    b.Navigation("DishInOrders");
                 });
 
             modelBuilder.Entity("DeliveryInternation2._0.Models.User", b =>

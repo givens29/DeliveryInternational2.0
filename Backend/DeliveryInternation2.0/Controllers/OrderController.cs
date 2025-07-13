@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using DeliveryInternation2._0.Applications.Services;
+using DeliveryInternation2._0.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,34 +21,24 @@ namespace DeliveryInternation2._0.Controllers
 
         [HttpPost("createOrder")]
         [Authorize("AnyAuthenticatedUser")]
-        public async Task<IActionResult> CreateOrder(string address)
+        public async Task<IActionResult> CreateOrder(OrderDto orderDto)
         {
-            var emailClaim = User.FindFirst(ClaimTypes.Email);
-
-            if (emailClaim != null)
+            try
             {
-                try
-                {
-                    var order = await _orderService.CreateOrder(emailClaim.Value, address);
-                    return Ok(order);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    return Unauthorized(ex.Message);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, ex.Message);
-                }
+                var order = await _orderService.CreateOrder(orderDto);
+                return Ok(order);
             }
-            else
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized("You are not authenticated. Please authenticated yourself");
-
+                return Unauthorized(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
 
         }
